@@ -8,7 +8,9 @@ class OpenAIRealtimeClient {
         this.isConnected = false;
         this.isRecording = false;
         this.currentPhase = 1;
-        
+        this.audioSources = [];
+        this.lastAudioSource = null;
+
         // Simple audio playback timing
         this.nextAudioTime = 0;
         
@@ -142,6 +144,8 @@ class OpenAIRealtimeClient {
             }, 10000);
         });
     }
+
+    
 
     // Build WebSocket URL for Azure OpenAI
     buildWebSocketUrl() {
@@ -294,59 +298,54 @@ class OpenAIRealtimeClient {
     }
 
     // Simple audio playback - schedule each chunk to play sequentially
-    playAudioDelta(audioBase64) {
-        try {
-            // Decode base64 audio data
-            const audioData = atob(audioBase64);
-            const audioArray = new Int16Array(audioData.length / 2);
-            
-            // Convert binary string to Int16Array
-            for (let i = 0; i < audioArray.length; i++) {
-                const byte1 = audioData.charCodeAt(i * 2);
-                const byte2 = audioData.charCodeAt(i * 2 + 1);
-                audioArray[i] = byte1 | (byte2 << 8);
-                // Handle signed 16-bit values
-                if (audioArray[i] > 32767) {
-                    audioArray[i] -= 65536;
-                }
-            }
+   playAudioDelta(audioBase64) {
+    try {
+        const audioData = atob(audioBase64);
+        const audioArray = new Int16Array(audioData.length / 2);
 
-            // Create audio buffer
-            const audioBuffer = this.audioContext.createBuffer(1, audioArray.length, 24000);
-            const channelData = audioBuffer.getChannelData(0);
-            
-            // Convert Int16 to Float32 for Web Audio API
-            for (let i = 0; i < audioArray.length; i++) {
-                channelData[i] = audioArray[i] / 32768.0;
-            }
-
-            // Create audio source
-            const source = this.audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            
-            // Create gain node for volume control
-            const gainNode = this.audioContext.createGain();
-            gainNode.gain.value = 0.8;
-            
-            // Connect audio graph
-            source.connect(gainNode);
-            gainNode.connect(this.audioContext.destination);
-            
-            // Schedule playback to avoid overlap but ensure continuity
-            const currentTime = this.audioContext.currentTime;
-            const startTime = Math.max(currentTime + 0.01, this.nextAudioTime);
-            
-            source.start(startTime);
-            
-            // Update next audio time to end of this buffer
-            this.nextAudioTime = startTime + audioBuffer.duration;
-            
-            console.log(`Audio chunk scheduled: start=${startTime.toFixed(3)}, duration=${audioBuffer.duration.toFixed(3)}, next=${this.nextAudioTime.toFixed(3)}`);
-            
-        } catch (error) {
-            console.error('Error playing audio delta:', error);
+        for (let i = 0; i < audioArray.length; i++) {
+            const byte1 = audioData.charCodeAt(i * 2);
+            const byte2 = audioData.charCodeAt(i * 2 + 1);
+            audioArray[i] = byte1 | (byte2 << 8);
+            if (audioArray[i] > 32767) audioArray[i] -= 65536;
         }
+
+        const audioBuffer = this.audioContext.createBuffer(1, audioArray.length, 24000);
+        const channelData = audioBuffer.getChannelData(0);
+
+        for (let i = 0; i < audioArray.length; i++) {
+            channelData[i] = audioArray[i] / 32768.0;
+        }
+
+        const source = this.audioContext.createBufferSource();
+        source.buffer = audioBuffer;
+
+        const gainNode = this.audioContext.createGain();
+        gainNode.gain.value = 0.8;
+
+        source.connect(gainNode);
+        gainNode.connect(this.audioContext.destination);
+
+        const currentTime = this.audioContext.currentTime;
+        const startTime = Math.max(currentTime + 0.01, this.nextAudioTime);
+
+        source.start(startTime);
+
+        // Track the source
+        this.lastAudioSource = source;
+        this.audioSources.push(source);
+
+        source.onended = () => {
+            console.log('Audio chunk finished playing');
+        };
+
+        this.nextAudioTime = startTime + audioBuffer.duration;
+
+        console.log(`Audio chunk scheduled: start=${startTime.toFixed(3)}, duration=${audioBuffer.duration.toFixed(3)}, next=${this.nextAudioTime.toFixed(3)}`);
+    } catch (error) {
+        console.error('Error playing audio delta:', error);
     }
+}
 
     // Reset audio timing when starting new conversation
     resetAudioTiming() {
