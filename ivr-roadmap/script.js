@@ -1,18 +1,30 @@
+// Audio file mappings for each phase
+const audioFiles = {
+    1: './audio/phase1.mp3',  // Q4 2025 - Inbound GoLive
+    2: './audio/phase2.mp3',  // Q4 2025 - Proactive Journeys
+    3: './audio/phase3.mp3',  // Q1 2026 - New Natural Voice
+    4: './audio/phase4.mp3',  // Q1 2026 - Agentic AI IVR
+    5: './audio/phase5.mp3',  // Q2 2026 - Outbound AI Calls
+    6: './audio/phase6.mp3',  // Q3 2026 - Language Switching
+    7: './audio/phase7.mp3',  // Q3 2026 - Agentic AI IVR 2
+    8: './audio/phase8.mp3'   // Q4 2026 - Next Best Offer
+};
+
 const phases = {
     1: { title: "Inbound Go Live", label: "Q4 2025 - 10 Oct" },
     2: { title: "Proactive Journeys", label: "Q4 2025 - 10 Nov" },
     3: { title: "New Natural Voices", label: "Q1 2026 - Feb" },
     4: { title: "Agentic AI IVR", label: "Q1 2026 - Mar" },
     5: { title: "Outbound AI Calls", label: "Q2 2026 - Apr" },
-    6: { title: "Language Switching", label: "Q3 2027" },
-    7: { title: "Agentic AI IVR 2", label: "Q3 2027" },
-    8: { title: "Next Best Offer In Call Context", label: "Q4 2027" }
-
+    6: { title: "Language Switching", label: "Q3 2026" },
+    7: { title: "Agentic AI IVR 2", label: "Q3 2026" },
+    8: { title: "Next Best Offer In Call Context", label: "Q4 2026" }
 };
 
 let currentPhase = 1;
 let callTimer;
 let callSeconds = 0;
+let currentAudio = null;
 
 // Phase expansion handling
 document.querySelectorAll('.phase-item').forEach(item => {
@@ -46,29 +58,116 @@ function togglePhase(phaseNumber) {
     }
 }
 
-// Play button handling
+// Play button handling with local audio files
 document.querySelectorAll('.btn-play').forEach(btn => {
     btn.addEventListener('click', function(e) {
         e.stopPropagation();
-        this.innerHTML = `
-            <svg class="icon" viewBox="0 0 24 24">
-                <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
-            </svg>
-            Playing...
-        `;
-        this.style.background = '#f44336';
-        
-        setTimeout(() => {
-            this.innerHTML = `
-                <svg class="icon" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                </svg>
-                Play Audio
-            `;
-            this.style.background = '#4CAF50';
-        }, 3000);
+        const phaseNumber = parseInt(this.dataset.phase);
+        playLocalAudio(phaseNumber, this);
     });
 });
+
+function playLocalAudio(phaseNumber, button) {
+    // If this button is currently playing, stop it
+    if (button.classList.contains('playing')) {
+        if (currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0;
+            currentAudio = null;
+        }
+        resetPlayButton(button);
+        return;
+    }
+
+    // Stop any other currently playing audio
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        resetAllPlayButtons();
+    }
+
+    const audioFile = audioFiles[phaseNumber];
+    if (!audioFile) {
+        showError(button, 'Audio file not configured for this phase');
+        return;
+    }
+
+    // Create new audio element
+    currentAudio = new Audio(audioFile);
+    
+    // Update button to show playing state
+    button.classList.add('playing');
+    button.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+        </svg>
+        Stop Audio
+    `;
+
+    // Handle audio events
+    currentAudio.addEventListener('loadstart', () => {
+        console.log(`Loading audio: ${audioFile}`);
+    });
+
+    currentAudio.addEventListener('canplaythrough', () => {
+        console.log(`Audio ready to play: ${audioFile}`);
+    });
+
+    currentAudio.addEventListener('error', (e) => {
+        console.error('Audio error:', e);
+        showError(button, `Could not load audio file: ${audioFile.split('/').pop()}`);
+        resetPlayButton(button);
+    });
+
+    currentAudio.addEventListener('ended', () => {
+        resetPlayButton(button);
+        currentAudio = null;
+    });
+
+    // Start playing
+    currentAudio.play().catch(error => {
+        console.error('Playback failed:', error);
+        showError(button, 'Playback failed. Please check if the audio file exists.');
+        resetPlayButton(button);
+    });
+}
+
+function resetPlayButton(button) {
+    button.classList.remove('playing');
+    button.innerHTML = `
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z"/>
+        </svg>
+        Play Audio
+    `;
+}
+
+function resetAllPlayButtons() {
+    document.querySelectorAll('.btn-play').forEach(btn => {
+        resetPlayButton(btn);
+    });
+}
+
+function showError(button, message) {
+    // Remove any existing error messages
+    const existingError = button.parentNode.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+
+    // Create error message
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.textContent = message;
+    button.parentNode.appendChild(errorDiv);
+
+    // Remove error message after 5 seconds
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.remove();
+        }
+    }, 5000);
+}
 
 // Call button handling with OpenAI Realtime integration
 document.querySelectorAll('.btn-call').forEach(btn => {
@@ -136,48 +235,6 @@ document.querySelector('.control-btn.mute').addEventListener('click', function()
             openAIRealtime.stopRecording();
         }
     }
-});
-
-// Other iPhone button interactions
-document.querySelector('.control-btn.keypad').addEventListener('click', function() {
-    this.style.background = 'rgba(255, 255, 255, 0.4)';
-    setTimeout(() => {
-        this.style.background = 'rgba(255, 255, 255, 0.15)';
-    }, 200);
-});
-
-document.querySelector('.control-btn.speaker').addEventListener('click', function() {
-    const isSpeakerOn = this.classList.contains('speaker-on');
-    if (isSpeakerOn) {
-        this.style.background = 'rgba(255, 255, 255, 0.15)';
-        this.classList.remove('speaker-on');
-        this.title = 'Speaker';
-    } else {
-        this.style.background = 'rgba(0, 122, 255, 0.9)';
-        this.classList.add('speaker-on');
-        this.title = 'Speaker Off';
-    }
-});
-
-document.querySelector('.control-btn.add-call').addEventListener('click', function() {
-    this.style.background = 'rgba(255, 255, 255, 0.4)';
-    setTimeout(() => {
-        this.style.background = 'rgba(255, 255, 255, 0.15)';
-    }, 200);
-});
-
-document.querySelector('.control-btn.facetime').addEventListener('click', function() {
-    this.style.background = 'rgba(255, 255, 255, 0.4)';
-    setTimeout(() => {
-        this.style.background = 'rgba(255, 255, 255, 0.15)';
-    }, 200);
-});
-
-document.querySelector('.control-btn.contacts').addEventListener('click', function() {
-    this.style.background = 'rgba(255, 255, 255, 0.4)';
-    setTimeout(() => {
-        this.style.background = 'rgba(255, 255, 255, 0.15)';
-    }, 200);
 });
 
 document.querySelector('.control-btn.hangup').addEventListener('click', function() {
@@ -292,4 +349,11 @@ function stopCallSimulation() {
 // Initialize with first phase active
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('[data-timeline="1"]').classList.add('active');
+});
+
+// Stop any playing audio when page unloads
+window.addEventListener('beforeunload', function() {
+    if (currentAudio) {
+        currentAudio.pause();
+    }
 });
