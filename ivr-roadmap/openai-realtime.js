@@ -19,6 +19,7 @@ class OpenAIRealtimeClient {
         // Azure OpenAI Configuration
         this.config = {
             endpoint: 'https://ahmed-m88l6h9f-eastus2.cognitiveservices.azure.com',
+            apiKey: '',
             deployment: 'gpt-4o-mini-realtime-preview',
             apiVersion: '2024-10-01-preview'
         };
@@ -133,20 +134,8 @@ class OpenAIRealtimeClient {
 
     // Configure session based on current phase
     async configureSession() {
-        const sessionConfig = {
-            systemPrompt: "You are a helpful AI assistant for a customer service center. Keep responses brief and professional.",
-            voice: 'alloy',
-            temperature: 0.7,
-            maxTokens: 300
-        };
-
-        if (typeof realtimePrompts !== 'undefined') {
-            const phaseConfig = realtimePrompts.getSessionConfig(this.currentPhase);
-            Object.assign(sessionConfig, phaseConfig);
-        }
-        
-        console.log(`Configuring session for Phase ${this.currentPhase}`, sessionConfig);
-        
+               
+        const sessionConfig = realtimePrompts.getSessionConfig(this.currentPhase);
         const sessionUpdate = {
             type: 'session.update',
             session: {
@@ -158,7 +147,6 @@ class OpenAIRealtimeClient {
                 input_audio_transcription: {
                     model: 'whisper-1'
                 },
-         
                 tools: [],
                 tool_choice: 'auto',
                 temperature: sessionConfig.temperature || 0.7,
@@ -188,17 +176,6 @@ class OpenAIRealtimeClient {
                 
             case 'session.updated':
                 console.log('Session updated');
-                // Send initial greeting
-                if (!this.hasActiveResponse) {
-                    this.hasActiveResponse = true;
-                    this.sendMessage({
-                        type: 'response.create',
-                        response: {
-                            modalities: ['text', 'audio'],
-                            instructions: "Greet the user and ask how you can help them today."
-                        }
-                    });
-                }
                 break;
                 
             case 'conversation.item.created':
@@ -228,6 +205,7 @@ class OpenAIRealtimeClient {
                 break;
                 
             case 'conversation.item.input_audio_transcription.completed':
+                console.log('Audio transcription completed for user input');
                 if (message.transcript && message.transcript.trim().length > 0) {
                     this.updateTranscription(message.transcript, 'user');
                 }
@@ -399,9 +377,8 @@ class OpenAIRealtimeClient {
             currentMessage = document.createElement('div');
             currentMessage.className = `current-${sender}-message`;
             currentMessage.style.marginBottom = '15px';
-            currentMessage.style.padding = '12px';
             currentMessage.style.background = 'rgba(255, 255, 255, 0.08)';
-            currentMessage.style.borderRadius = '8px';
+            currentMessage.style.paddingLeft = '8px';
             currentMessage.style.borderLeft = sender === 'assistant' ? '3px solid #4CAF50' : '3px solid #2196F3';
             currentMessage.innerHTML = `<strong>${sender === 'assistant' ? 'Agent' : 'You'}:</strong> `;
             transcriptionBox.appendChild(currentMessage);
@@ -438,14 +415,13 @@ class OpenAIRealtimeClient {
         transcriptionText.style.marginBottom = '15px';
         transcriptionText.style.padding = '12px';
         transcriptionText.style.background = 'rgba(255, 255, 255, 0.08)';
-        transcriptionText.style.borderRadius = '8px';
+        transcriptionText.style.paddingLeft = '8px';
         transcriptionText.style.borderLeft = sender === 'assistant' ? '3px solid #4CAF50' : '3px solid #2196F3';
         transcriptionText.innerHTML = `<strong>${sender === 'assistant' ? 'Agent' : 'You'}:</strong> <span class="message-text">${text}</span>`;
         
         transcriptionBox.appendChild(transcriptionText);
         transcriptionBox.scrollTop = transcriptionBox.scrollHeight;
     }
-
 
     // UPDATED: Start recording - clear previous chunks
     startRecording() {
@@ -465,8 +441,6 @@ class OpenAIRealtimeClient {
         // Send all recorded audio as one batch
         this.sendRecordedAudio();
     }
-
-    // Remove commitAudio method since we handle it in sendRecordedAudio
 
     // Disconnect from the API
     disconnect() {

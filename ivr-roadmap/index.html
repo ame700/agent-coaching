@@ -15,276 +15,39 @@
         </div>
 
         <div class="main-content">
-            <div class="phases-section">
-                <div class="year-group">
-                    <div class="year-header">2025</div>
-                    <div class="phase-item active" data-phase="1">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q4 2025 - 10 Oct</div>
-                                <div class="phase-title">Inbound GoLive - AI IVR</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
-                        </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    - 44 Ai Journeys. 11Labs (Best AI voice startup) for Arabic. Azure for English.
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="1">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="1">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Dynamic phases will be rendered here -->
+            <div class="phases-section" id="phases-container">
+                <!-- All phases will be dynamically generated from phaseConfigs -->
+            </div>
+            
+            <!-- Audio Visualizer Section (Default Display) -->
+            <div class="audio-visualizer-section" id="audio-visualizer-section">
+                <div class="visualizer-container">
+                    <div class="visualizer-header">
+                        <h3 id="visualizer-title">Audio Visualizer</h3>
+                        <p id="visualizer-subtitle">Select a phase and click "Play Audio" to start</p>
                     </div>
-
-                    <div class="phase-item" data-phase="2">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q4 2025 - 10 Nov</div>
-                                <div class="phase-title">Proactive Journeys</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
-                        </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    - Card Activation, IPP. Transfer Issue , Pending SR
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="2">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="2">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    
+                    <div class="audio-visualizer" id="audio-visualizer">
+                        <!-- Animated bars will be generated by JavaScript -->
                     </div>
-                </div>
-
-                <div class="year-group">
-                    <div class="year-header">2026</div>
-                    <div class="phase-item" data-phase="3">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q1 2026 - Feb</div>
-                                <div class="phase-title">New Natural Voice</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
+                    
+                    <div class="audio-controls">
+                        <button class="control-btn" id="pause-audio" disabled>⏸️</button>
+                        <div class="audio-progress">
+                            <div class="progress-bar" id="audio-progress-bar"></div>
                         </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    for English and Hindi.
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="3">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="3">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="phase-item" data-phase="4">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q1 2026 - Mar</div>
-                                <div class="phase-title">Agentic AI IVR</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
-                        </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    AI IVR actions on your behalf for 5 usecases: e.g, did i recieve my amazon refund ?
-                                    Conver yesterday airline purchase to IPP.
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="4">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="4">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="phase-item" data-phase="5">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q2 2026 - Apr</div>
-                                <div class="phase-title">Outbound AI Calls</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
-                        </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    AI Calls to customers to follow up on debt or lead.
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="5">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="5">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="phase-item" data-phase="6">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q3 2026</div>
-                                <div class="phase-title">Langauge Switching</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
-                        </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    Multi-language support for the IVR system, allowing seamless switching between
-                                    languages based on customer preferences for English, Arabic, and Hindi.
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="6">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="6">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="phase-item" data-phase="7">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q3 2026</div>
-                                <div class="phase-title">Agentic AI IVR 2</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
-                        </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    AI IVR actions on your behalf for 10 usecases.
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="7">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="7">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="phase-item" data-phase="8">
-                        <div class="phase-header">
-                            <div class="phase-info">
-                                <div class="phase-label">Q4 2026</div>
-                                <div class="phase-title">Next Best Offer In Call Context</div>
-                            </div>
-                            <div class="phase-toggle">+</div>
-                        </div>
-                        <div class="phase-details">
-                            <div class="phase-content">
-                                <div class="phase-description">
-                                    Realtime offer selection within ongoing calls.
-                                </div>
-                                <div class="action-buttons">
-                                    <button class="btn btn-play" data-phase="8">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
-                                        Play Audio
-                                    </button>
-                                    <button class="btn btn-call" data-phase="8">
-                                        <svg class="icon" viewBox="0 0 24 24">
-                                            <path
-                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
-                                        </svg>
-                                        Start Call
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <button class="control-btn" id="stop-audio" disabled>⏹️</button>
                     </div>
                 </div>
             </div>
+            
+            <!-- Call/Video Overlay -->
             <div class="call-overlay" id="call-overlay">
                 <div class="call-interface">
                     <button class="close-btn" id="close-call">×</button>
 
-                    <div class="phone-section">
+                    <div class="phone-section" id="phone-section">
                         <div class="phone-header">
                             <div class="call-status">📞 Calling Contact Center</div>
                             <div class="step-info" id="current-step-info">Q4 2025: Infrastructure Setup</div>
@@ -312,11 +75,26 @@
                         </div>
                     </div>
 
-                    <!-- Transcription Component (Separate Card) -->
+                    <!-- Video Section (Hidden by default) -->
+                    <div class="video-section" id="video-section" style="display: none;">
+                        <div class="phone-header">
+                            <div class="call-status">🎬 Video Demo</div>
+                            <div class="step-info" id="video-step-info">Demo Video</div>
+                        </div>
+
+                        <div class="video-container">
+                            <video class="video-player" id="demo-video" controls>
+                                <source src="" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    </div>
+
+                    <!-- Transcription Component -->
                     <div class="transcription-section">
                         <div class="transcription-header">
-                            <h3>Live Transcription</h3>
-                            <p style="color: #888; font-size: 14px;">Real-time speech-to-text conversion</p>
+                            <h3 id="transcription-title">Live Transcription</h3>
+                            <p style="color: #888; font-size: 14px;" id="transcription-subtitle">Real-time speech-to-text conversion</p>
                         </div>
 
                         <div class="transcription-box" id="transcription-box">
@@ -329,10 +107,8 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 
     <script src="realtime-prompts.js"></script>
     <script src="openai-realtime.js"></script>
